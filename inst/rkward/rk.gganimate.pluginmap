@@ -1,0 +1,125 @@
+<!DOCTYPE
+	rkpluginmap
+>
+<document
+	base_prefix=""
+	namespace="2AnimatedBubbleChart"
+	id="2AnimatedBubbleChart_rkward"
+	po_id="2AnimatedBubbleChart_rkward"
+	priority="medium"
+>
+	<!--
+		this code was generated using the rkwarddev package.
+	perhaps don't make changes here, but in the rkwarddev script instead!
+	-->
+	<dependencies
+		R_min_version="3.5.0"
+	>
+		<package
+			name="ggplot2"
+		/>
+		<package
+			name="gganimate"
+		/>
+		<package
+			name="gifski"
+		/>
+		<package
+			name="transformr"
+		/>
+		<package
+			name="srvyr"
+		/>
+		<package
+			name="dplyr"
+		/>
+	</dependencies>
+	<about
+		name="rk.gganimate"
+		shortinfo="Data preparation and generation of animated bubble charts (Gapminder style) using srvyr and gganimate."
+		longinfo="Data preparation and generation of animated bubble charts (Gapminder style) using srvyr and gganimate."
+		version="0.0.1"
+		releasedate="2026-06-23"
+		url="https://github.com/AlfCano/rk.gganimate"
+		license="GPL (&gt;= 3)"
+	>
+		<author
+			given="Alfonso"
+			family="Cano"
+			email="alfonso.cano@correo.buap.mx"
+			role="aut, cre"
+		/>
+	</about>
+	<require
+		map="rkward::menu"
+	/>
+	<require
+		map="rkward::embedded"
+	/>
+	<components>
+		<component
+			id="cmp_2AnmtdBbblChrt1DtPrpfrAnm"
+			label="1. Data Prep for Animation"
+			type="standard"
+			file="plugins/1.DataPrepforAnimation.xml"
+		>
+		</component>
+		<component
+			id="cmp_2AnmtdBbblChrt2AnmtdBbblC"
+			label="2. Animated Bubble Chart"
+			type="standard"
+			file="plugins/2.AnimatedBubbleChart.xml"
+		>
+		</component>
+	</components>
+	<hierarchy>
+		<menu
+			id="men_Survey"
+			label="Survey"
+		>
+			<menu
+				id="men_Graphs"
+				label="Graphs"
+			>
+				<menu
+					id="men_Animations"
+					label="Animations"
+				>
+					<entry
+						component="cmp_2AnmtdBbblChrt1DtPrpfrAnm"
+					/>
+				</menu>
+			</menu>
+		</menu>
+		<menu
+			id="men_Survey"
+			label="Survey"
+		>
+			<menu
+				id="men_Graphs"
+				label="Graphs"
+			>
+				<menu
+					id="men_Animations"
+					label="Animations"
+				>
+					<entry
+						component="cmp_2AnmtdBbblChrt2AnmtdBbblC"
+					/>
+				</menu>
+			</menu>
+		</menu>
+	</hierarchy>
+	<!--
+		<context
+			id="x11"
+		>
+		</context>
+	-->
+	<!--
+		<context
+			id="import"
+		>
+		</context>
+	-->
+</document>

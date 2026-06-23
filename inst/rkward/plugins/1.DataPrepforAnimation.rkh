@@ -1,0 +1,52 @@
+<!DOCTYPE rkhelp >
+<document>
+	<!--
+		this code was generated using the rkwarddev package.
+	perhaps don't make changes here, but in the rkwarddev script instead!
+	-->
+	<summary>
+	</summary>
+	<usage>
+	</usage>
+	<!--
+		<section id="sct_EDITORDE" title="EDIT OR DELETE ME">
+			EDIT OR DELETE ME
+		</section>
+	-->
+	<settings>
+		<caption id="tab_DatGrpng" />
+		<caption id="frm_SrcDtFlt" />
+		<setting id="prep_svy">
+		</setting>
+		<setting id="prep_filter">
+		</setting>
+		<caption id="frm_GrpngDmn" />
+		<setting id="prep_time">
+		</setting>
+		<setting id="prep_group">
+		</setting>
+		<caption id="tab_MetrcsXY" />
+		<caption id="frm_CntnsDCM" />
+		<setting id="prep_y">
+		</setting>
+		<caption id="frm_PrprtnDC" />
+		<setting id="prep_x_cat">
+		</setting>
+		<setting id="prep_x_lvl">
+		</setting>
+		<caption id="tab_Output" />
+		<setting id="prep_save">
+		</setting>
+	</settings>
+	<!--
+		<related>
+			<ul>
+				<li>
+					<link href="rkward://rhelp/..." />
+				</li>
+			</ul>
+		</related>
+	-->
+	<technical>
+	</technical>
+</document>

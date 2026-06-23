@@ -1,0 +1,75 @@
+<!DOCTYPE rkhelp >
+<document>
+	<!--
+		this code was generated using the rkwarddev package.
+	perhaps don't make changes here, but in the rkwarddev script instead!
+	-->
+	<summary>
+	</summary>
+	<usage>
+	</usage>
+	<!--
+		<section id="sct_EDITORDE" title="EDIT OR DELETE ME">
+			EDIT OR DELETE ME
+		</section>
+	-->
+	<settings>
+		<caption id="tab_Variabls" />
+		<setting id="inp_df">
+		</setting>
+		<setting id="inp_x">
+		</setting>
+		<setting id="inp_y">
+		</setting>
+		<setting id="inp_time">
+		</setting>
+		<setting id="inp_size">
+		</setting>
+		<setting id="inp_color">
+		</setting>
+		<caption id="tab_LablsThm" />
+		<setting id="inp_title">
+		</setting>
+		<setting id="inp_sub">
+		</setting>
+		<setting id="inp_xlab">
+		</setting>
+		<setting id="inp_ylab">
+		</setting>
+		<setting id="drop_pal">
+		</setting>
+		<setting id="chk_legend">
+		</setting>
+		<setting id="drop_theme">
+		</setting>
+		<caption id="frm_StrytlFB" />
+		<setting id="chk_story">
+		</setting>
+		<setting id="inp_target">
+		</setting>
+		<caption id="tab_RndrExpr" />
+		<caption id="frm_AnmtnStt" />
+		<setting id="spin_fps">
+		</setting>
+		<setting id="spin_dur">
+		</setting>
+		<caption id="frm_Dimensns" />
+		<setting id="spin_w">
+		</setting>
+		<setting id="spin_h">
+		</setting>
+		<setting id="save_file">
+		</setting>
+	</settings>
+	<!--
+		<related>
+			<ul>
+				<li>
+					<link href="rkward://rhelp/..." />
+				</li>
+			</ul>
+		</related>
+	-->
+	<technical>
+	</technical>
+</document>

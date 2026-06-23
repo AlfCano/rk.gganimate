@@ -1,0 +1,273 @@
+local({
+  # =========================================================================================
+  # 1. Package Definition and Metadata
+  # =========================================================================================
+  require(rkwarddev)
+  rkwarddev.required("0.10-3")
+
+  package_about <- rk.XML.about(
+    name = "rk.gganimate",
+    author = person(
+      given = "Alfonso",
+      family = "Cano",
+      email = "alfonso.cano@correo.buap.mx",
+      role = c("aut", "cre")
+    ),
+    about = list(
+      desc = "Data preparation and generation of animated bubble charts (Gapminder style) using srvyr and gganimate.",
+      version = "0.0.1",
+      url = "https://github.com/AlfCano/rk.gganimate",
+      license = "GPL (>= 3)"
+    )
+  )
+
+  dependencies_node <- rk.XML.dependencies(
+    dependencies = list(R.min = "3.5.0"),
+    package = list(
+      c(name = "ggplot2"),
+      c(name = "gganimate"),
+      c(name = "gifski"),
+      c(name = "transformr"),
+      c(name = "srvyr"),
+      c(name = "dplyr")
+    )
+  )
+
+  js_helpers <- "
+    function getCol(id) {
+        var raw = getValue(id);
+        if (!raw) return 'NULL';
+        if (raw.indexOf('[[') > -1) {
+            var inner = raw.split('[[')[1].replace(']]', '');
+            return inner.split(String.fromCharCode(34)).join('').split(String.fromCharCode(39)).join('');
+        }
+        if (raw.indexOf('$') > -1) {
+            return raw.split('$')[1];
+        }
+        return raw;
+    }
+  "
+
+  # =========================================================================================
+  # 2. COMPONENTE SECUNDARIO: Data Prep (srvyr 3D Data Extractor)
+  # =========================================================================================
+
+  var_sel_prep <- rk.XML.varselector(id.name = "v_sel_prep")
+  prep_svy <- rk.XML.varslot("Survey Design Object", source = "v_sel_prep", required = TRUE, classes = "survey.design", id.name = "prep_svy")
+  prep_time <- rk.XML.varslot("1. Time Variable (e.g., year)", source = "v_sel_prep", required = TRUE, id.name = "prep_time")
+  prep_group <- rk.XML.varslot("2. Group Variable (e.g., ent)", source = "v_sel_prep", required = TRUE, id.name = "prep_group")
+  prep_y <- rk.XML.varslot("3. Y-Axis: Numeric Variable for Mean (e.g., ingocup)", source = "v_sel_prep", required = TRUE, id.name = "prep_y")
+  prep_x_cat <- rk.XML.varslot("4. X-Axis: Categorical Variable for % (e.g., seg_soc)", source = "v_sel_prep", required = TRUE, id.name = "prep_x_cat")
+  prep_x_lvl <- rk.XML.input("Target Category Level for % (e.g., Sin acceso)", required = TRUE, id.name = "prep_x_lvl")
+  prep_filter <- rk.XML.input("Optional: dplyr::filter condition (e.g., clase1 == 'Población económicamente activa')", id.name = "prep_filter")
+  prep_save <- rk.XML.saveobj("Save summarized table as", initial = "tabla_animacion", chk = TRUE, id.name = "prep_save")
+
+  dialog_prep <- rk.XML.dialog(
+    label = "Data Prep for Animation (srvyr)",
+    child = rk.XML.row(
+      var_sel_prep,
+      rk.XML.tabbook(tabs = list(
+        "Data & Grouping" = rk.XML.col(
+          rk.XML.frame(prep_svy, prep_filter, label = "Source Data & Filters"),
+          rk.XML.frame(prep_time, prep_group, label = "Grouping Dimensions")
+        ),
+        "Metrics (X & Y)" = rk.XML.col(
+          rk.XML.frame(prep_y, label = "Continuous Dimension (Calculates Mean)"),
+          rk.XML.frame(prep_x_cat, prep_x_lvl, label = "Proportion Dimension (Calculates %)")
+        ),
+        "Output" = rk.XML.col(
+          rk.XML.text("<b>Note:</b> Bubble size (Population Total) is calculated automatically based on the survey weights."),
+          prep_save
+        )
+      ))
+    )
+  )
+
+  js_calc_prep <- paste(js_helpers, "
+    var svy = getCol('prep_svy');
+    if (!svy) return;
+    var time = getCol('prep_time');
+    var grp = getCol('prep_group');
+    var y_var = getCol('prep_y');
+    var x_cat = getCol('prep_x_cat');
+    var x_lvl = getValue('prep_x_lvl');
+    var filter_cond = getValue('prep_filter');
+    var save = getValue('prep_save');
+
+    echo(\"require(srvyr)\\n\");
+    echo(\"require(dplyr)\\n\\n\");
+
+    echo(\"cat('Calculating summarized 3D data. This might take a few minutes...\\\\n')\\n\");
+
+    echo(save + \" <- srvyr::as_survey(\" + svy + \") %>%\\n\");
+
+    if (filter_cond !== '') {
+        echo(\"  dplyr::filter(\" + filter_cond + \") %>%\\n\");
+    }
+
+    echo(\"  dplyr::filter(!is.na(\" + time + \"), !is.na(\" + grp + \")) %>%\\n\");
+    echo(\"  dplyr::group_by(\" + time + \", \" + grp + \") %>%\\n\");
+    echo(\"  dplyr::summarise(\\n\");
+    echo(\"    bubble_size = srvyr::survey_total(na.rm = TRUE),\\n\");
+    echo(\"    y_mean = srvyr::survey_mean(\" + y_var + \", na.rm = TRUE),\\n\");
+    echo(\"    x_pct = srvyr::survey_mean(\" + x_cat + \" == '\" + x_lvl + \"', na.rm = TRUE) * 100\\n\");
+    echo(\"  ) %>%\\n\");
+    echo(\"  dplyr::select(\" + time + \", \" + grp + \", bubble_size, y_mean, x_pct)\\n\\n\");
+
+    echo(\"cat('Done! The table \" + save + \" is ready for rk.gganimate.\\\\n')\\n\");
+  ", sep = "\n")
+
+  js_print_prep <- "echo(\"rk.header('Animation Data Prep completed')\\n\");"
+  comp_prep <- rk.plugin.component("1. Data Prep for Animation", xml = list(dialog = dialog_prep), js = list(require = c("srvyr", "dplyr"), calculate = js_calc_prep, printout = js_print_prep), hierarchy = list("Survey", "Graphs", "Animations"))
+
+  # =========================================================================================
+  # 3. PLUGIN PRINCIPAL: Animated Bubble Chart (Storytelling)
+  # =========================================================================================
+
+  var_sel_anim <- rk.XML.varselector(id.name = "v_sel_anim")
+
+  inp_df <- rk.XML.varslot("Data Frame (Summarized data is recommended)", source = "v_sel_anim", required = TRUE, classes = "data.frame", id.name = "inp_df")
+  inp_x <- rk.XML.varslot("X Axis (Numeric)", source = "v_sel_anim", required = TRUE, id.name = "inp_x")
+  inp_y <- rk.XML.varslot("Y Axis (Numeric)", source = "v_sel_anim", required = TRUE, id.name = "inp_y")
+  inp_time <- rk.XML.varslot("Time / Frame Variable (e.g., Year)", source = "v_sel_anim", required = TRUE, id.name = "inp_time")
+  inp_size <- rk.XML.varslot("Bubble Size (Optional)", source = "v_sel_anim", required = FALSE, id.name = "inp_size")
+  inp_color <- rk.XML.varslot("Color / Group Category (Optional)", source = "v_sel_anim", required = FALSE, id.name = "inp_color")
+
+  tab_data <- rk.XML.col(inp_df, inp_x, inp_y, inp_time, inp_size, inp_color)
+
+  inp_title <- rk.XML.input("Main Title", initial = "Evolution over time", id.name = "inp_title")
+  inp_sub <- rk.XML.input("Subtitle (Use {frame_time} to display the dynamic year)", initial = "Year: {frame_time}", id.name = "inp_sub")
+  inp_xlab <- rk.XML.input("X Axis Label", id.name = "inp_xlab")
+  inp_ylab <- rk.XML.input("Y Axis Label", id.name = "inp_ylab")
+
+  drop_pal <- rk.XML.dropdown("Color Palette", id.name = "drop_pal", options = list("Set1" = list(val = "Set1", chk = TRUE), "Dark2" = list(val = "Dark2"), "Paired" = list(val = "Paired"), "Spectral" = list(val = "Spectral")))
+
+  # NUEVO: Casilla opcional para mostrar u ocultar la leyenda (desmarcada por defecto)
+  chk_legend <- rk.XML.cbox("Show Color Legend", value = "1", chk = FALSE, id.name = "chk_legend")
+
+  drop_theme <- rk.XML.dropdown("Plot Theme", id.name = "drop_theme", options = list("Minimal" = list(val = "theme_minimal", chk = TRUE), "Classic" = list(val = "theme_classic"), "Light" = list(val = "theme_light"), "Void" = list(val = "theme_void")))
+
+  chk_story <- rk.XML.cbox("Highlight specific bubbles (Storytelling)", value = "1", chk = FALSE, id.name = "chk_story")
+  inp_target <- rk.XML.input("Exact name(s) to track (comma separated, e.g., Puebla, Tlaxcala)", id.name = "inp_target")
+  frame_story <- rk.XML.frame(chk_story, inp_target, label = "Storytelling: Follow Bubbles")
+
+  tab_labels <- rk.XML.row(
+    rk.XML.col(inp_title, inp_sub, inp_xlab, inp_ylab),
+    rk.XML.col(drop_pal, chk_legend, drop_theme, frame_story) # Agregamos chk_legend aquí
+  )
+
+  spin_fps <- rk.XML.spinbox("Frames per second (FPS)", min = 1, max = 50, initial = 10, id.name = "spin_fps")
+  spin_dur <- rk.XML.spinbox("Duration (Seconds)", min = 2, max = 60, initial = 10, id.name = "spin_dur")
+  spin_w <- rk.XML.spinbox("Width (px)", min = 200, max = 2000, initial = 800, id.name = "spin_w")
+  spin_h <- rk.XML.spinbox("Height (px)", min = 200, max = 2000, initial = 600, id.name = "spin_h")
+  save_file <- rk.XML.browser("Save GIF as", type = "savefile", required = TRUE, initial = "animated_chart.gif", id.name = "save_file")
+
+  # ELIMINAMOS chk_html y dejamos la pestaña limpia
+  tab_anim <- rk.XML.col(rk.XML.frame(spin_fps, spin_dur, label = "Animation Settings"), rk.XML.frame(spin_w, spin_h, label = "Dimensions"), save_file)
+
+  dialog_gganim <- rk.XML.dialog(label = "Animated Bubble Chart", child = rk.XML.row(var_sel_anim, rk.XML.tabbook(tabs = list("Variables" = tab_data, "Labels & Theme" = tab_labels, "Render & Export" = tab_anim))))
+
+  js_calc_anim <- paste(js_helpers, "
+    var df = getValue('inp_df'); if (!df) return;
+    var x = getCol('inp_x'); var y = getCol('inp_y'); var time = getCol('inp_time'); var sz = getCol('inp_size'); var col = getCol('inp_color');
+
+    var title = getValue('inp_title'); var sub = getValue('inp_sub'); var xlab = getValue('inp_xlab'); var ylab = getValue('inp_ylab');
+    var pal = getValue('drop_pal'); var theme = getValue('drop_theme'); var show_leg = getValue('chk_legend');
+
+    var story = getValue('chk_story'); var target = getValue('inp_target');
+
+    var fps = getValue('spin_fps'); var dur = getValue('spin_dur'); var w = getValue('spin_w'); var h = getValue('spin_h'); var path = getValue('save_file');
+
+    echo(\"require(ggplot2)\\nrequire(gganimate)\\nrequire(gifski)\\n\\n\");
+
+    var aes_call = \"x = \" + x + \", y = \" + y;
+    if (sz !== 'NULL') aes_call += \", size = \" + sz;
+    if (col !== 'NULL') aes_call += \", color = \" + col;
+
+    echo(\"p <- ggplot2::ggplot(\" + df + \", ggplot2::aes(\" + aes_call + \")) +\\n\");
+    echo(\"  ggplot2::geom_point(alpha = 0.75, stroke = 1)\\n\\n\");
+
+    if (sz !== 'NULL') {
+        echo(\"p <- p + ggplot2::scale_size(range = c(3, 30), guide = 'none')\\n\");
+    }
+
+    if (col !== 'NULL') {
+        echo(\"\\n# Palette Logic for multiple groups\\n\");
+        echo(\"n_colors <- length(unique(stats::na.omit(\" + df + \"[['\" + col + \"']])))\\n\");
+        echo(\"if(n_colors <= 8) {\\n\");
+        echo(\"  p <- p + ggplot2::scale_color_brewer(palette = '\" + pal + \"')\\n\");
+        echo(\"} else {\\n\");
+        echo(\"  my_pal <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, '\" + pal + \"'))(n_colors)\\n\");
+        echo(\"  p <- p + ggplot2::scale_color_manual(values = my_pal)\\n\"); // Ya no forzamos guide='none' aquí
+        echo(\"}\\n\\n\");
+    }
+
+    // LÓGICA DE STORYTELLING (GEOM_LABEL MULTIPLE)
+    if (col !== 'NULL' && story === '1' && target !== '') {
+        var target_array = target.split(',').map(function(item) {
+            return \"'\" + item.trim() + \"'\";
+        });
+        var target_vector = \"c(\" + target_array.join(', ') + \")\";
+
+        echo(\"# Storytelling: Track specific bubbles\\n\");
+        echo(\"p <- p + ggplot2::geom_label(\\n\");
+        echo(\"  ggplot2::aes(label = \" + col + \"),\\n\");
+        echo(\"  data = subset(\" + df + \", \" + col + \" %in% \" + target_vector + \"),\\n\");
+        echo(\"  vjust = -1.5, size = 5, fontface = 'bold', show.legend = FALSE, alpha = 0.8\\n\");
+        echo(\")\\n\\n\");
+    }
+
+    echo(\"p <- p + ggplot2::\" + theme + \"(base_size = 14)\\n\");
+
+    // NUEVO: Respetamos la decisión del usuario sobre la leyenda
+    if (show_leg !== '1') {
+        echo(\"p <- p + ggplot2::theme(legend.position = 'none')\\n\");
+    }
+
+    var labs_call = [];
+    if (title) labs_call.push(\"title = '\" + title + \"'\");
+    if (sub) labs_call.push(\"subtitle = '\" + sub + \"'\");
+    if (xlab) labs_call.push(\"x = '\" + xlab + \"'\");
+    if (ylab) labs_call.push(\"y = '\" + ylab + \"'\");
+
+    if (labs_call.length > 0) {
+        echo(\"p <- p + ggplot2::labs(\" + labs_call.join(\", \") + \")\\n\");
+    }
+
+    echo(\"\\n# Animation settings\\n\");
+    echo(\"p <- p + gganimate::transition_time(as.integer(as.character(\" + time + \"))) +\\n\");
+    echo(\"  gganimate::ease_aes('linear')\\n\\n\");
+
+    echo(\"cat('Rendering animation. This may take a minute...\\\\n')\\n\");
+    echo(\"anim <- gganimate::animate(p, fps = \" + fps + \", duration = \" + dur + \", width = \" + w + \", height = \" + h + \", renderer = gganimate::gifski_renderer())\\n\");
+
+    var safe_path = path.replace(/\\\\/g, '/');
+    echo(\"gganimate::anim_save('\" + safe_path + \"', animation = anim)\\n\");
+  ", sep = "\n")
+
+  js_print_anim <- "
+    var path = getValue('save_file');
+    echo(\"rk.header('Animated Chart Generated')\\n\");
+    var safe_path = path.replace(/\\\\/g, '/');
+    echo(\"cat('Animation successfully saved to: \" + safe_path + \"\\\\n\\\\n')\\n\");
+  "
+
+  # =========================================================================================
+  # 4. Final Skeleton Assembly
+  # =========================================================================================
+  rk.plugin.skeleton(
+    about = package_about,
+    path = ".",
+    xml = list(dialog = dialog_gganim),
+    js = list(require = c("ggplot2", "gganimate"), calculate = js_calc_anim, printout = js_print_anim),
+    components = list(comp_prep),
+    pluginmap = list(
+        name = "2. Animated Bubble Chart",
+        hierarchy = list("Survey", "Graphs", "Animations")
+    ),
+    dependencies = dependencies_node,
+    create = c("pmap", "xml", "js", "desc", "rkh"),
+    overwrite = TRUE,
+    load = TRUE
+  )
+})

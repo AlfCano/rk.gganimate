@@ -1,0 +1,177 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: rk.gganimate 0.0.1\n"
+"Report-Msgid-Bugs-To: alfonso.cano@correo.buap.mx\n"
+"POT-Creation-Date: 2026-06-23 13:10-0600\n"
+"PO-Revision-Date: 2026-06-23 13:10-0600\n"
+"Last-Translator: Alfonso Cano <alfonso.cano@correo.buap.mx>\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Data preparation and generation of animated bubble charts (Gapminder style) using srvyr and gganimate."
+msgstr "Préparation des données et génération de graphiques à bulles animés (style Gapminder) à l'aide de srvyr et gganimate."
+
+msgid "Survey"
+msgstr "Enquêtes"
+
+msgid "Graphs"
+msgstr "Graphiques"
+
+msgid "Animations"
+msgstr "Animations"
+
+msgid "1. Data Prep for Animation"
+msgstr "1. Préparation des Données pour l'Animation"
+
+msgid "Data Prep for Animation (srvyr)"
+msgstr "Préparation des Données pour l'Animation (srvyr)"
+
+msgid "Survey Design Object"
+msgstr "Objet de Plan de Sondage"
+
+msgid "1. Time Variable (e.g., year)"
+msgstr "1. Variable de Temps (ex., année)"
+
+msgid "2. Group Variable (e.g., ent)"
+msgstr "2. Variable de Groupe (ex., état)"
+
+msgid "3. Y-Axis: Numeric Variable for Mean (e.g., ingocup)"
+msgstr "3. Axe Y: Variable Numérique pour Moyenne (ex., revenu)"
+
+msgid "4. X-Axis: Categorical Variable for % (e.g., seg_soc)"
+msgstr "4. Axe X: Variable Catégorielle pour % (ex., sécurité sociale)"
+
+msgid "Target Category Level for % (e.g., Sin acceso)"
+msgstr "Niveau de Catégorie Cible pour % (ex., Sans accès)"
+
+msgid "Optional: dplyr::filter condition (e.g., clase1 == 'Población económicamente activa')"
+msgstr "Optionnel: Condition dplyr::filter (ex., classe1 == 'PEA')"
+
+msgid "Save summarized table as"
+msgstr "Enregistrer le tableau résumé sous"
+
+msgid "Data & Grouping"
+msgstr "Données & Groupement"
+
+msgid "Source Data & Filters"
+msgstr "Données Source & Filtres"
+
+msgid "Grouping Dimensions"
+msgstr "Dimensions de Regroupement"
+
+msgid "Metrics (X & Y)"
+msgstr "Métriques (X & Y)"
+
+msgid "Continuous Dimension (Calculates Mean)"
+msgstr "Dimension Continue (Calcule la Moyenne)"
+
+msgid "Proportion Dimension (Calculates %)"
+msgstr "Dimension de Proportion (Calcule le %)"
+
+msgid "Output"
+msgstr "Sortie"
+
+msgid "<b>Note:</b> Bubble size (Population Total) is calculated automatically based on the survey weights."
+msgstr "<b>Note :</b> La taille des bulles (Population Totale) est calculée automatiquement à partir des poids de l'enquête."
+
+msgid "2. Animated Bubble Chart"
+msgstr "2. Graphique à Bulles Animé"
+
+msgid "Data Frame (Summarized data is recommended)"
+msgstr "Data Frame (Données résumées recommandées)"
+
+msgid "X Axis (Numeric)"
+msgstr "Axe X (Numérique)"
+
+msgid "Y Axis (Numeric)"
+msgstr "Axe Y (Numérique)"
+
+msgid "Time / Frame Variable (e.g., Year)"
+msgstr "Variable de Temps / Trame (ex., Année)"
+
+msgid "Bubble Size (Optional)"
+msgstr "Taille des Bulles (Optionnel)"
+
+msgid "Color / Group Category (Optional)"
+msgstr "Couleur / Catégorie de Groupe (Optionnel)"
+
+msgid "Variables"
+msgstr "Variables"
+
+msgid "Main Title"
+msgstr "Titre Principal"
+
+msgid "Evolution over time"
+msgstr "Évolution dans le temps"
+
+msgid "Subtitle (Use {frame_time} to display the dynamic year)"
+msgstr "Sous-titre (Utilisez {frame_time} pour afficher l'année dynamique)"
+
+msgid "Year: {frame_time}"
+msgstr "Année : {frame_time}"
+
+msgid "X Axis Label"
+msgstr "Étiquette Axe X"
+
+msgid "Y Axis Label"
+msgstr "Étiquette Axe Y"
+
+msgid "Color Palette"
+msgstr "Palette de Couleurs"
+
+msgid "Show Color Legend"
+msgstr "Afficher la Légende des Couleurs"
+
+msgid "Plot Theme"
+msgstr "Thème du Graphique"
+
+msgid "Minimal"
+msgstr "Minimal"
+
+msgid "Classic"
+msgstr "Classique"
+
+msgid "Light"
+msgstr "Clair (Light)"
+
+msgid "Void"
+msgstr "Vide (Void)"
+
+msgid "Highlight specific bubbles (Storytelling)"
+msgstr "Mettre en évidence des bulles spécifiques (Storytelling)"
+
+msgid "Exact name(s) to track (comma separated, e.g., Puebla, Tlaxcala)"
+msgstr "Nom(s) exact(s) à suivre (séparés par des virgules, ex., Puebla, Tlaxcala)"
+
+msgid "Storytelling: Follow Bubbles"
+msgstr "Storytelling : Suivre les Bulles"
+
+msgid "Labels & Theme"
+msgstr "Étiquettes & Thème"
+
+msgid "Frames per second (FPS)"
+msgstr "Images par seconde (FPS)"
+
+msgid "Duration (Seconds)"
+msgstr "Durée (Secondes)"
+
+msgid "Width (px)"
+msgstr "Largeur (px)"
+
+msgid "Height (px)"
+msgstr "Hauteur (px)"
+
+msgid "Save GIF as"
+msgstr "Enregistrer le GIF sous"
+
+msgid "Animation Settings"
+msgstr "Paramètres d'Animation"
+
+msgid "Dimensions"
+msgstr "Dimensions"
+
+msgid "Render & Export"
+msgstr "Rendu & Exportation"

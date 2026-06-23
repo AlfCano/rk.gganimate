@@ -1,0 +1,62 @@
+<!DOCTYPE rkplugin >
+<document>
+	<!--
+		this code was generated using the rkwarddev package.
+	perhaps don't make changes here, but in the rkwarddev script instead!
+	-->
+	<code file="1.DataPrepforAnimation.js" />
+	<help file="1.DataPrepforAnimation.rkh" />
+	<!--
+		<dependencies>
+		</dependencies>
+	-->
+	<logic>
+		<!--
+			<convert id="!edit!" sources="!edit!" mode="equals" standard="!edit!" />
+		-->
+		<!--
+			<connect governor="!edit!.state" client="!edit!.enabled" />
+		-->
+	</logic>
+	<dialog label="Data Prep for Animation (srvyr)">
+		<row id="row_vDGDGSDFSD">
+			<varselector id="v_sel_prep" />
+			<tabbook>
+				<tab label="Data &amp; Grouping" id="tab_DatGrpng">
+					<column id="clm_fSDFSDFSDO">
+						<frame label="Source Data &amp; Filters" id="frm_SrcDtFlt">
+							<varslot id="prep_svy" label="Survey Design Object" source="v_sel_prep" classes="survey.design" required="true" />
+							<input label="Optional: dplyr::filter condition (e.g., clase1 == 'Población económicamente activa')" id="prep_filter" />
+						</frame>
+						<frame label="Grouping Dimensions" id="frm_GrpngDmn">
+							<varslot id="prep_time" label="1. Time Variable (e.g., year)" source="v_sel_prep" required="true" />
+							<varslot id="prep_group" label="2. Group Variable (e.g., ent)" source="v_sel_prep" required="true" />
+						</frame>
+					</column>
+				</tab>
+				<tab label="Metrics (X &amp; Y)" id="tab_MetrcsXY">
+					<column id="clm_fCDCMCDCM3">
+						<frame label="Continuous Dimension (Calculates Mean)" id="frm_CntnsDCM">
+							<varslot id="prep_y" label="3. Y-Axis: Numeric Variable for Mean (e.g., ingocup)" source="v_sel_prep" required="true" />
+						</frame>
+						<frame label="Proportion Dimension (Calculates %)" id="frm_PrprtnDC">
+							<varslot id="prep_x_cat" label="4. X-Axis: Categorical Variable for % (e.g., seg_soc)" source="v_sel_prep" required="true" />
+							<input label="Target Category Level for % (e.g., Sin acceso)" id="prep_x_lvl" required="true" />
+						</frame>
+					</column>
+				</tab>
+				<tab label="Output" id="tab_Output">
+					<column id="clm_tNBPTNBPTS">
+						<text id="txt_bNtbBbPT">
+							<b>
+								Note:
+							</b>
+							Bubble size (Population Total) is calculated automatically based on the survey weights.
+						</text>
+						<saveobject label="Save summarized table as" checkable="true" checked="true" initial="tabla_animacion" id="prep_save" />
+					</column>
+				</tab>
+			</tabbook>
+		</row>
+	</dialog>
+</document>

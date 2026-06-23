@@ -1,0 +1,80 @@
+<!DOCTYPE rkplugin >
+<document>
+	<!--
+		this code was generated using the rkwarddev package.
+	perhaps don't make changes here, but in the rkwarddev script instead!
+	-->
+	<code file="2.AnimatedBubbleChart.js" />
+	<help file="2.AnimatedBubbleChart.rkh" />
+	<!--
+		<dependencies>
+		</dependencies>
+	-->
+	<logic>
+		<!--
+			<convert id="!edit!" sources="!edit!" mode="equals" standard="!edit!" />
+		-->
+		<!--
+			<connect governor="!edit!.state" client="!edit!.enabled" />
+		-->
+	</logic>
+	<dialog label="Animated Bubble Chart">
+		<row id="row_vVVDFSXANY">
+			<varselector id="v_sel_anim" />
+			<tabbook>
+				<tab label="Variables" id="tab_Variabls">
+					<column id="clm_vDFSXANYAN">
+						<varslot id="inp_df" label="Data Frame (Summarized data is recommended)" source="v_sel_anim" classes="data.frame" required="true" />
+						<varslot id="inp_x" label="X Axis (Numeric)" source="v_sel_anim" required="true" />
+						<varslot id="inp_y" label="Y Axis (Numeric)" source="v_sel_anim" required="true" />
+						<varslot id="inp_time" label="Time / Frame Variable (e.g., Year)" source="v_sel_anim" required="true" />
+						<varslot id="inp_size" label="Bubble Size (Optional)" source="v_sel_anim" />
+						<varslot id="inp_color" label="Color / Group Category (Optional)" source="v_sel_anim" />
+					</column>
+				</tab>
+				<tab label="Labels &amp; Theme" id="tab_LablsThm">
+					<row id="row_cMTESUYXAL">
+						<column id="clm_iMTESUYXAL">
+							<input label="Main Title" id="inp_title" initial="Evolution over time" />
+							<input label="Subtitle (Use {frame_time} to display the dynamic year)" id="inp_sub" initial="Year: {frame_time}" />
+							<input label="X Axis Label" id="inp_xlab" />
+							<input label="Y Axis Label" id="inp_ylab" />
+						</column>
+						<column id="clm_dCPS1S1D2D">
+							<dropdown id="drop_pal" label="Color Palette">
+								<option label="Set1" value="Set1" checked="true" />
+								<option label="Dark2" value="Dark2" />
+								<option label="Paired" value="Paired" />
+								<option label="Spectral" value="Spectral" />
+							</dropdown>
+							<checkbox id="chk_legend" label="Show Color Legend" value="1" />
+							<dropdown id="drop_theme" label="Plot Theme">
+								<option label="Minimal" value="theme_minimal" checked="true" />
+								<option label="Classic" value="theme_classic" />
+								<option label="Light" value="theme_light" />
+								<option label="Void" value="theme_void" />
+							</dropdown>
+							<frame label="Storytelling: Follow Bubbles" id="frm_StrytlFB">
+								<checkbox id="chk_story" label="Highlight specific bubbles (Storytelling)" value="1" />
+								<input label="Exact name(s) to track (comma separated, e.g., Puebla, Tlaxcala)" id="inp_target" />
+							</frame>
+						</column>
+					</row>
+				</tab>
+				<tab label="Render &amp; Export" id="tab_RndrExpr">
+					<column id="clm_fASASFFPS1">
+						<frame label="Animation Settings" id="frm_AnmtnStt">
+							<spinbox label="Frames per second (FPS)" id="spin_fps" initial="10" min="1" max="50" />
+							<spinbox label="Duration (Seconds)" id="spin_dur" initial="10" min="2" max="60" />
+						</frame>
+						<frame label="Dimensions" id="frm_Dimensns">
+							<spinbox label="Width (px)" id="spin_w" initial="800" min="200" max="2000" />
+							<spinbox label="Height (px)" id="spin_h" initial="600" min="200" max="2000" />
+						</frame>
+						<browser label="Save GIF as" type="savefile" id="save_file" initial="animated_chart.gif" />
+					</column>
+				</tab>
+			</tabbook>
+		</row>
+	</dialog>
+</document>
