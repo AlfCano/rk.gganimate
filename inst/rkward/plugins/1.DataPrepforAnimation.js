@@ -17,18 +17,19 @@ function calculate(is_preview){
     function getCol(id) {
         var raw = getValue(id);
         if (!raw) return 'NULL';
-        if (raw.indexOf('[[') > -1) {
-            var inner = raw.split('[[')[1].replace(']]', '');
-            return inner.split(String.fromCharCode(34)).join('').split(String.fromCharCode(39)).join('');
-        }
-        if (raw.indexOf('$') > -1) {
-            return raw.split('$')[1];
+        // Divide por corchetes o signos de dólar y filtra espacios vacíos
+        var parts = raw.split(/[\[\]\$]+/).filter(Boolean);
+        if (parts.length > 0) {
+            // Siempre toma la última parte (el verdadero nombre de la columna)
+            var last = parts[parts.length - 1];
+            // Quita las comillas si las hay
+            return last.replace(/["']/g, '');
         }
         return raw;
     }
   
 
-    var svy = getCol('prep_svy');
+    var svy = getValue('prep_svy'); // Extraemos el objeto completo
     if (!svy) return;
     var time = getCol('prep_time');
     var grp = getCol('prep_group');
@@ -36,14 +37,14 @@ function calculate(is_preview){
     var x_cat = getCol('prep_x_cat');
     var x_lvl = getValue('prep_x_lvl');
     var filter_cond = getValue('prep_filter');
-    var save = getValue('prep_save');
 
     echo("require(srvyr)\n");
     echo("require(dplyr)\n\n");
 
     echo("cat('Calculating summarized 3D data. This might take a few minutes...\\n')\n");
 
-    echo(save + " <- srvyr::as_survey(" + svy + ") %>%\n");
+    // REGLA #3: Hardcodeamos 'tabla_animacion' según el initial de saveobj
+    echo("tabla_animacion <- srvyr::as_survey(" + svy + ") %>%\n");
 
     if (filter_cond !== '') {
         echo("  dplyr::filter(" + filter_cond + ") %>%\n");
@@ -58,7 +59,7 @@ function calculate(is_preview){
     echo("  ) %>%\n");
     echo("  dplyr::select(" + time + ", " + grp + ", bubble_size, y_mean, x_pct)\n\n");
 
-    echo("cat('Done! The table " + save + " is ready for rk.gganimate.\\n')\n");
+    echo("cat('Done! The table tabla_animacion is ready for rk.gganimate.\\n')\n");
   
 }
 

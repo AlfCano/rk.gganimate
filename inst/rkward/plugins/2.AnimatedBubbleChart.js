@@ -17,12 +17,13 @@ function calculate(is_preview){
     function getCol(id) {
         var raw = getValue(id);
         if (!raw) return 'NULL';
-        if (raw.indexOf('[[') > -1) {
-            var inner = raw.split('[[')[1].replace(']]', '');
-            return inner.split(String.fromCharCode(34)).join('').split(String.fromCharCode(39)).join('');
-        }
-        if (raw.indexOf('$') > -1) {
-            return raw.split('$')[1];
+        // Divide por corchetes o signos de dólar y filtra espacios vacíos
+        var parts = raw.split(/[\[\]\$]+/).filter(Boolean);
+        if (parts.length > 0) {
+            // Siempre toma la última parte (el verdadero nombre de la columna)
+            var last = parts[parts.length - 1];
+            // Quita las comillas si las hay
+            return last.replace(/["']/g, '');
         }
         return raw;
     }

@@ -1,6 +1,6 @@
 # rk.gganimate
 
-![Version](https://img.shields.io/badge/Version-0.0.1-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.0.2-blue.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![RKWard](https://img.shields.io/badge/Platform-RKWard-green)
 [![R Linter](https://github.com/AlfCano/rk.gganimate/actions/workflows/lintr.yml/badge.svg)](https://github.com/AlfCano/rk.gganimate/actions/workflows/lintr.yml)
@@ -21,6 +21,13 @@ This package features an exclusive **Storytelling Highlight Mode**, allowing you
 * **Smart Color Palettes:** Automatically expands qualitative palettes (like `Set1` or `Dark2`) using `colorRampPalette` if you group by variables with many categories (e.g., the 32 Mexican states), preventing grey/recycled colors.
 * **Native Survey Support:** Includes a dedicated "Data Prep" tool that reads your `survey.design` objects, calculates exact weighted means and proportions, and generates the required population totals for the bubble sizes.
 * **Multilingual:** Fully translated into English, Spanish, French, German, and Portuguese (Brazil).
+
+---
+
+## 🚀 What is new in Version 0.0.2?
+
+* **Strict Rule #3 Compliance:** Fixed a scoping issue in the Data Prep module. The generated R code now correctly hardcodes the output object (`tabla_animacion`), preventing RKWard from duplicating objects or losing metadata upon saving.
+* **Survey Design Parsing Fix:** Rewrote the JS `getCol()` helper with a robust regex to properly parse deeply nested `survey.design` variables. It now correctly identifies the actual column names (e.g., `ent`, `year`) instead of getting stuck on the internal `[["variables"]]` list structure.
 
 ---
 
