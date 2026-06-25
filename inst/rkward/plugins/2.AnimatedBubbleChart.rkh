@@ -27,7 +27,7 @@
 		</setting>
 		<setting id="inp_color">
 		</setting>
-		<caption id="tab_LablsThm" />
+		<caption id="tab_Labels" />
 		<setting id="inp_title">
 		</setting>
 		<setting id="inp_sub">
@@ -36,11 +36,18 @@
 		</setting>
 		<setting id="inp_ylab">
 		</setting>
+		<setting id="inp_leg_title">
+		</setting>
+		<setting id="inp_caption">
+		</setting>
+		<caption id="tab_ThmTrckn" />
 		<setting id="drop_pal">
 		</setting>
 		<setting id="chk_legend">
 		</setting>
 		<setting id="drop_theme">
+		</setting>
+		<setting id="spin_base_size">
 		</setting>
 		<caption id="frm_StrytlFB" />
 		<setting id="chk_story">

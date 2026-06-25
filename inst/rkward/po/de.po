@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: rk.gganimate 0.0.1\n"
+"Project-Id-Version: rk.gganimate 0.0.3\n"
 "Report-Msgid-Bugs-To: alfonso.cano@correo.buap.mx\n"
 "POT-Creation-Date: 2026-06-23 13:10-0600\n"
 "PO-Revision-Date: 2026-06-23 13:10-0600\n"
@@ -175,3 +175,19 @@ msgstr "Abmessungen"
 
 msgid "Render & Export"
 msgstr "Rendern & Exportieren"
+
+msgid "Color Legend Title (Leave empty to use variable label)"
+msgstr "Titel der Farblegende (Leer lassen, um das Variablen-Label zu verwenden)"
+
+msgid "Caption (Source, credits, etc.)"
+msgstr "Bildunterschrift (Quelle, Credits, etc.)"
+
+msgid "Base Font Size (px)"
+msgstr "Basis-Schriftgröße (px)"
+
+msgid "Labels"
+msgstr "Beschriftungen"
+
+msgid "Theme & Tracking"
+msgstr "Design & Verfolgung"
+

@@ -1,6 +1,6 @@
 # rk.gganimate
 
-![Version](https://img.shields.io/badge/Version-0.0.2-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.0.3-blue.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![RKWard](https://img.shields.io/badge/Platform-RKWard-green)
 [![R Linter](https://github.com/AlfCano/rk.gganimate/actions/workflows/lintr.yml/badge.svg)](https://github.com/AlfCano/rk.gganimate/actions/workflows/lintr.yml)
@@ -23,6 +23,17 @@ This package features an exclusive **Storytelling Highlight Mode**, allowing you
 * **Multilingual:** Fully translated into English, Spanish, French, German, and Portuguese (Brazil).
 
 ---
+
+## 🚀 What is new in Version 0.0.3?
+
+This update focuses on fine-tuning the visual output, adding publication-ready details, and improving the user interface:
+
+**✨ New Features & Improvements:**
+* **Smart Legend Titles:** Added a field to customize the color legend title. If left blank, the plugin intelligently extracts the original variable label (`.rk.meta` or `variable.label`) directly from your data frame, keeping your charts looking professional automatically.
+* **Caption Support:** Added a dedicated Caption field in the UI to easily include data sources, methodology notes, or credits at the bottom of your animation.
+* **Dynamic Font Scaling:** Introduced a "Base Font Size" control. You can now easily scale up all text elements (titles, axes, legends) simultaneously—perfect for generating readable GIFs for PowerPoint presentations or social media.
+* **UI Reorganization:** The interface has been streamlined. The overloaded "Labels & Theme" tab is now split into **"Labels"** (titles, axes, captions) and **"Theme & Tracking"** (palettes, font sizes, storytelling), providing a cleaner, step-by-step user workflow.
+* **i18n Updates:** Translation files (`.po`/`.mo`) for Spanish, French, German, and Brazilian Portuguese have been updated to cover all the new UI elements.
 
 ## 🚀 What is new in Version 0.0.2?
 

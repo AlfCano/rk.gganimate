@@ -38,8 +38,8 @@
 		name="rk.gganimate"
 		shortinfo="Data preparation and generation of animated bubble charts (Gapminder style) using srvyr and gganimate."
 		longinfo="Data preparation and generation of animated bubble charts (Gapminder style) using srvyr and gganimate."
-		version="0.0.2"
-		releasedate="2026-06-24"
+		version="0.0.3"
+		releasedate="2026-06-25"
 		url="https://github.com/AlfCano/rk.gganimate"
 		license="GPL (&gt;= 3)"
 	>

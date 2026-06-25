@@ -32,34 +32,39 @@
 						<varslot id="inp_color" label="Color / Group Category (Optional)" source="v_sel_anim" />
 					</column>
 				</tab>
-				<tab label="Labels &amp; Theme" id="tab_LablsThm">
-					<row id="row_cMTESUYXAL">
-						<column id="clm_iMTESUYXAL">
-							<input label="Main Title" id="inp_title" initial="Evolution over time" />
-							<input label="Subtitle (Use {frame_time} to display the dynamic year)" id="inp_sub" initial="Year: {frame_time}" />
-							<input label="X Axis Label" id="inp_xlab" />
-							<input label="Y Axis Label" id="inp_ylab" />
-						</column>
-						<column id="clm_dCPS1S1D2D">
-							<dropdown id="drop_pal" label="Color Palette">
-								<option label="Set1" value="Set1" checked="true" />
-								<option label="Dark2" value="Dark2" />
-								<option label="Paired" value="Paired" />
-								<option label="Spectral" value="Spectral" />
-							</dropdown>
-							<checkbox id="chk_legend" label="Show Color Legend" value="1" />
-							<dropdown id="drop_theme" label="Plot Theme">
-								<option label="Minimal" value="theme_minimal" checked="true" />
-								<option label="Classic" value="theme_classic" />
-								<option label="Light" value="theme_light" />
-								<option label="Void" value="theme_void" />
-							</dropdown>
-							<frame label="Storytelling: Follow Bubbles" id="frm_StrytlFB">
-								<checkbox id="chk_story" label="Highlight specific bubbles (Storytelling)" value="1" />
-								<input label="Exact name(s) to track (comma separated, e.g., Puebla, Tlaxcala)" id="inp_target" />
-							</frame>
-						</column>
-					</row>
+				<tab label="Labels" id="tab_Labels">
+					<column id="clm_iMTESUYXAL">
+						<input label="Main Title" id="inp_title" initial="Evolution over time" />
+						<input label="Subtitle (Use {frame_time} to display the dynamic year)" id="inp_sub" initial="Year: {frame_time}" />
+						<input label="X Axis Label" id="inp_xlab" />
+						<input label="Y Axis Label" id="inp_ylab" />
+						<input label="Color Legend Title (Leave empty to use variable label)" id="inp_leg_title" />
+						<input label="Caption (Source, credits, etc.)" id="inp_caption" />
+						<stretch />
+					</column>
+				</tab>
+				<tab label="Theme &amp; Tracking" id="tab_ThmTrckn">
+					<column id="clm_dCPS1S1D2D">
+						<dropdown id="drop_pal" label="Color Palette">
+							<option label="Set1" value="Set1" checked="true" />
+							<option label="Dark2" value="Dark2" />
+							<option label="Paired" value="Paired" />
+							<option label="Spectral" value="Spectral" />
+						</dropdown>
+						<checkbox id="chk_legend" label="Show Color Legend" value="1" />
+						<dropdown id="drop_theme" label="Plot Theme">
+							<option label="Minimal" value="theme_minimal" checked="true" />
+							<option label="Classic" value="theme_classic" />
+							<option label="Light" value="theme_light" />
+							<option label="Void" value="theme_void" />
+						</dropdown>
+						<spinbox label="Base Font Size (px)" id="spin_base_size" initial="14" min="6" max="36" />
+						<frame label="Storytelling: Follow Bubbles" id="frm_StrytlFB">
+							<checkbox id="chk_story" label="Highlight specific bubbles (Storytelling)" value="1" />
+							<input label="Exact name(s) to track (comma separated, e.g., Puebla, Tlaxcala)" id="inp_target" />
+						</frame>
+						<stretch />
+					</column>
 				</tab>
 				<tab label="Render &amp; Export" id="tab_RndrExpr">
 					<column id="clm_fASASFFPS1">

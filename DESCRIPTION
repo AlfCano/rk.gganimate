@@ -2,8 +2,8 @@ Package: rk.gganimate
 Type: Package
 Title: Data preparation and generation of animated bubble charts
         (Gapminder style) using srvyr and gganimate.
-Version: 0.0.2
-Date: 2026-06-24
+Version: 0.0.3
+Date: 2026-06-25
 Author: Alfonso Cano
 Maintainer: Alfonso Cano <alfonso.cano@correo.buap.mx>
 Depends: R (>= 3.5.0)

@@ -33,7 +33,11 @@ function calculate(is_preview){
     var x = getCol('inp_x'); var y = getCol('inp_y'); var time = getCol('inp_time'); var sz = getCol('inp_size'); var col = getCol('inp_color');
 
     var title = getValue('inp_title'); var sub = getValue('inp_sub'); var xlab = getValue('inp_xlab'); var ylab = getValue('inp_ylab');
+    var leg_title = getValue('inp_leg_title');
+    var caption = getValue('inp_caption'); // <--- NUEVA LÍNEA AQUÍ
+
     var pal = getValue('drop_pal'); var theme = getValue('drop_theme'); var show_leg = getValue('chk_legend');
+    var base_sz = getValue('spin_base_size'); // NUEVO: Tamaño de fuente
 
     var story = getValue('chk_story'); var target = getValue('inp_target');
 
@@ -59,7 +63,7 @@ function calculate(is_preview){
         echo("  p <- p + ggplot2::scale_color_brewer(palette = '" + pal + "')\n");
         echo("} else {\n");
         echo("  my_pal <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, '" + pal + "'))(n_colors)\n");
-        echo("  p <- p + ggplot2::scale_color_manual(values = my_pal)\n"); // Ya no forzamos guide='none' aquí
+        echo("  p <- p + ggplot2::scale_color_manual(values = my_pal)\n");
         echo("}\n\n");
     }
 
@@ -78,9 +82,9 @@ function calculate(is_preview){
         echo(")\n\n");
     }
 
-    echo("p <- p + ggplot2::" + theme + "(base_size = 14)\n");
+    // APLICAMOS EL TAMAÑO DE FUENTE DINÁMICO
+    echo("p <- p + ggplot2::" + theme + "(base_size = " + base_sz + ")\n");
 
-    // NUEVO: Respetamos la decisión del usuario sobre la leyenda
     if (show_leg !== '1') {
         echo("p <- p + ggplot2::theme(legend.position = 'none')\n");
     }
@@ -90,6 +94,22 @@ function calculate(is_preview){
     if (sub) labs_call.push("subtitle = '" + sub + "'");
     if (xlab) labs_call.push("x = '" + xlab + "'");
     if (ylab) labs_call.push("y = '" + ylab + "'");
+    if (caption) labs_call.push("caption = '" + caption + "'"); // <--- NUEVA LÍNEA AQUÍ
+
+    // NUEVO: Lógica inteligente para el título de la leyenda
+    if (col !== 'NULL') {
+        if (leg_title !== '') {
+            // Si el usuario escribió algo, lo usamos
+            labs_call.push("color = '" + leg_title + "'");
+        } else {
+            // Si está vacío, le decimos a R que busque la etiqueta en los metadatos (.rk.meta o variable.label)
+            echo("\n# Extraer etiqueta de variable para la leyenda\n");
+            echo("col_lbl <- attr(" + df + "[['" + col + "']], 'variable.label')\n");
+            echo("if(is.null(col_lbl)) col_lbl <- attr(" + df + "[['" + col + "']], '.rk.meta')[['label']]\n");
+            echo("if(is.null(col_lbl)) col_lbl <- '" + col + "'\n");
+            labs_call.push("color = col_lbl"); // Sin comillas porque es una variable de R
+        }
+    }
 
     if (labs_call.length > 0) {
         echo("p <- p + ggplot2::labs(" + labs_call.join(", ") + ")\n");

@@ -15,7 +15,7 @@ local({
     ),
     about = list(
       desc = "Data preparation and generation of animated bubble charts (Gapminder style) using srvyr and gganimate.",
-      version = "0.0.2",
+      version = "0.0.3",
       url = "https://github.com/AlfCano/rk.gganimate",
       license = "GPL (>= 3)"
     )
@@ -136,25 +136,46 @@ local({
 
   tab_data <- rk.XML.col(inp_df, inp_x, inp_y, inp_time, inp_size, inp_color)
 
-  inp_title <- rk.XML.input("Main Title", initial = "Evolution over time", id.name = "inp_title")
+ inp_title <- rk.XML.input("Main Title", initial = "Evolution over time", id.name = "inp_title")
   inp_sub <- rk.XML.input("Subtitle (Use {frame_time} to display the dynamic year)", initial = "Year: {frame_time}", id.name = "inp_sub")
   inp_xlab <- rk.XML.input("X Axis Label", id.name = "inp_xlab")
   inp_ylab <- rk.XML.input("Y Axis Label", id.name = "inp_ylab")
+  inp_leg_title <- rk.XML.input("Color Legend Title (Leave empty to use variable label)", id.name = "inp_leg_title")
+
+  # NUEVO: Campo para el Caption
+  inp_caption <- rk.XML.input("Caption (Source, credits, etc.)", id.name = "inp_caption")
 
   drop_pal <- rk.XML.dropdown("Color Palette", id.name = "drop_pal", options = list("Set1" = list(val = "Set1", chk = TRUE), "Dark2" = list(val = "Dark2"), "Paired" = list(val = "Paired"), "Spectral" = list(val = "Spectral")))
-
-  # NUEVO: Casilla opcional para mostrar u ocultar la leyenda (desmarcada por defecto)
   chk_legend <- rk.XML.cbox("Show Color Legend", value = "1", chk = FALSE, id.name = "chk_legend")
-
   drop_theme <- rk.XML.dropdown("Plot Theme", id.name = "drop_theme", options = list("Minimal" = list(val = "theme_minimal", chk = TRUE), "Classic" = list(val = "theme_classic"), "Light" = list(val = "theme_light"), "Void" = list(val = "theme_void")))
+
+  # NUEVO: Spinbox para el tamaño general de la fuente
+  spin_base_size <- rk.XML.spinbox("Base Font Size (px)", min = 6, max = 36, initial = 14, id.name = "spin_base_size")
 
   chk_story <- rk.XML.cbox("Highlight specific bubbles (Storytelling)", value = "1", chk = FALSE, id.name = "chk_story")
   inp_target <- rk.XML.input("Exact name(s) to track (comma separated, e.g., Puebla, Tlaxcala)", id.name = "inp_target")
   frame_story <- rk.XML.frame(chk_story, inp_target, label = "Storytelling: Follow Bubbles")
 
-  tab_labels <- rk.XML.row(
-    rk.XML.col(inp_title, inp_sub, inp_xlab, inp_ylab),
-    rk.XML.col(drop_pal, chk_legend, drop_theme, frame_story) # Agregamos chk_legend aquí
+  # Añadimos los nuevos campos a sus respectivas columnas
+    # 1. Pestaña exclusiva para Etiquetas (Izquierda)
+tab_labels <- rk.XML.col(
+    inp_title,
+    inp_sub,
+    inp_xlab,
+    inp_ylab,
+    inp_leg_title,
+    inp_caption,    # <--- AÑADIDO AQUÍ
+    rk.XML.stretch()
+  )
+
+  # 2. Pestaña exclusiva para Tema y Storytelling (Derecha)
+  tab_theme <- rk.XML.col(
+    drop_pal,
+    chk_legend,
+    drop_theme,
+    spin_base_size,
+    frame_story,
+    rk.XML.stretch()
   )
 
   spin_fps <- rk.XML.spinbox("Frames per second (FPS)", min = 1, max = 50, initial = 10, id.name = "spin_fps")
@@ -163,17 +184,34 @@ local({
   spin_h <- rk.XML.spinbox("Height (px)", min = 200, max = 2000, initial = 600, id.name = "spin_h")
   save_file <- rk.XML.browser("Save GIF as", type = "savefile", required = TRUE, initial = "animated_chart.gif", id.name = "save_file")
 
-  # ELIMINAMOS chk_html y dejamos la pestaña limpia
   tab_anim <- rk.XML.col(rk.XML.frame(spin_fps, spin_dur, label = "Animation Settings"), rk.XML.frame(spin_w, spin_h, label = "Dimensions"), save_file)
 
-  dialog_gganim <- rk.XML.dialog(label = "Animated Bubble Chart", child = rk.XML.row(var_sel_anim, rk.XML.tabbook(tabs = list("Variables" = tab_data, "Labels & Theme" = tab_labels, "Render & Export" = tab_anim))))
+  # 3. Actualizamos el Tabbook para que ahora tenga 4 pestañas en lugar de 3
+  dialog_gganim <- rk.XML.dialog(
+    label = "Animated Bubble Chart",
+    child = rk.XML.row(
+      var_sel_anim,
+      rk.XML.tabbook(tabs = list(
+        "Variables" = tab_data,
+        "Labels" = tab_labels,              # Nueva pestaña 2
+        "Theme & Tracking" = tab_theme,     # Nueva pestaña 3
+        "Render & Export" = tab_anim
+      ))
+    )
+  )
 
-  js_calc_anim <- paste(js_helpers, "
+  # ==================================
+
+js_calc_anim <- paste(js_helpers, "
     var df = getValue('inp_df'); if (!df) return;
     var x = getCol('inp_x'); var y = getCol('inp_y'); var time = getCol('inp_time'); var sz = getCol('inp_size'); var col = getCol('inp_color');
 
     var title = getValue('inp_title'); var sub = getValue('inp_sub'); var xlab = getValue('inp_xlab'); var ylab = getValue('inp_ylab');
+    var leg_title = getValue('inp_leg_title');
+    var caption = getValue('inp_caption'); // <--- NUEVA LÍNEA AQUÍ
+
     var pal = getValue('drop_pal'); var theme = getValue('drop_theme'); var show_leg = getValue('chk_legend');
+    var base_sz = getValue('spin_base_size'); // NUEVO: Tamaño de fuente
 
     var story = getValue('chk_story'); var target = getValue('inp_target');
 
@@ -199,7 +237,7 @@ local({
         echo(\"  p <- p + ggplot2::scale_color_brewer(palette = '\" + pal + \"')\\n\");
         echo(\"} else {\\n\");
         echo(\"  my_pal <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, '\" + pal + \"'))(n_colors)\\n\");
-        echo(\"  p <- p + ggplot2::scale_color_manual(values = my_pal)\\n\"); // Ya no forzamos guide='none' aquí
+        echo(\"  p <- p + ggplot2::scale_color_manual(values = my_pal)\\n\");
         echo(\"}\\n\\n\");
     }
 
@@ -218,9 +256,9 @@ local({
         echo(\")\\n\\n\");
     }
 
-    echo(\"p <- p + ggplot2::\" + theme + \"(base_size = 14)\\n\");
+    // APLICAMOS EL TAMAÑO DE FUENTE DINÁMICO
+    echo(\"p <- p + ggplot2::\" + theme + \"(base_size = \" + base_sz + \")\\n\");
 
-    // NUEVO: Respetamos la decisión del usuario sobre la leyenda
     if (show_leg !== '1') {
         echo(\"p <- p + ggplot2::theme(legend.position = 'none')\\n\");
     }
@@ -230,6 +268,22 @@ local({
     if (sub) labs_call.push(\"subtitle = '\" + sub + \"'\");
     if (xlab) labs_call.push(\"x = '\" + xlab + \"'\");
     if (ylab) labs_call.push(\"y = '\" + ylab + \"'\");
+    if (caption) labs_call.push(\"caption = '\" + caption + \"'\"); // <--- NUEVA LÍNEA AQUÍ
+
+    // NUEVO: Lógica inteligente para el título de la leyenda
+    if (col !== 'NULL') {
+        if (leg_title !== '') {
+            // Si el usuario escribió algo, lo usamos
+            labs_call.push(\"color = '\" + leg_title + \"'\");
+        } else {
+            // Si está vacío, le decimos a R que busque la etiqueta en los metadatos (.rk.meta o variable.label)
+            echo(\"\\n# Extraer etiqueta de variable para la leyenda\\n\");
+            echo(\"col_lbl <- attr(\" + df + \"[['\" + col + \"']], 'variable.label')\\n\");
+            echo(\"if(is.null(col_lbl)) col_lbl <- attr(\" + df + \"[['\" + col + \"']], '.rk.meta')[['label']]\\n\");
+            echo(\"if(is.null(col_lbl)) col_lbl <- '\" + col + \"'\\n\");
+            labs_call.push(\"color = col_lbl\"); // Sin comillas porque es una variable de R
+        }
+    }
 
     if (labs_call.length > 0) {
         echo(\"p <- p + ggplot2::labs(\" + labs_call.join(\", \") + \")\\n\");
