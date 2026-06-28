@@ -1,6 +1,6 @@
 # rk.gganimate
 
-![Version](https://img.shields.io/badge/Version-0.0.3-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.0.4-blue.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![RKWard](https://img.shields.io/badge/Platform-RKWard-green)
 [![R Linter](https://github.com/AlfCano/rk.gganimate/actions/workflows/lintr.yml/badge.svg)](https://github.com/AlfCano/rk.gganimate/actions/workflows/lintr.yml)
@@ -23,6 +23,13 @@ This package features an exclusive **Storytelling Highlight Mode**, allowing you
 * **Multilingual:** Fully translated into English, Spanish, French, German, and Portuguese (Brazil).
 
 ---
+
+## 🚀 What's New in Version 0.0.4
+
+This major update transforms the plugin into a highly flexible tool for multi-dimensional data storytelling:
+* **Multi-Grouping Data Cubes:** The *Data Prep* tool now accepts multiple grouping variables (e.g., State AND Economic Sector simultaneously), allowing you to build rich, multi-dimensional summary tables from complex survey designs.
+* **Dynamic Plot Filtering:** A new `dplyr::filter` box has been added directly to the *Animated Bubble Chart* interface. You can now subset your animations on-the-fly (e.g., `sec_est == "Manufactura"`) without needing to create new tables in your workspace.
+* **Smart Ghost-Label Prevention:** The internal JavaScript engine was completely refactored. The Color Palette logic and the Storytelling text-tracking (`ggrepel`) now dynamically attach strictly to the filtered subset, preventing "ghost" labels from invisible categories from ruining your animations.
 
 ## 🚀 What is new in Version 0.0.3?
 
@@ -67,16 +74,19 @@ Once installed, open RKWard, navigate to **Settings -> Configure RKWard -> Plugi
 
 ## 🛠️ Usage Workflow
 
-This plugin adds two new tools to your RKWard menus, located under the **Survey -> Graphs -> Animations** tab:
+This plugin adds a two-step toolkit under **Survey -> Graphs -> Animations**.
 
-### 1. Data Prep for Animation
-* **What it does:** Acts as a bridge between complex survey weights and animations. It condenses millions of survey records into a clean, 5-column data frame (Time, Group, Bubble Size, X, Y).
-* **Inputs:** Provide your `survey.design` object, select a time variable (e.g., Year), a grouping variable (e.g., State), and the metrics you want to plot (continuous for the Y-axis, categorical proportions for the X-axis).
+### Step 1: Data Prep for Animation (srvyr)
+This tool crunches heavy survey data (millions of rows) into a lightweight table (one row per group per year) required for Gapminder-style animations.
+1. **Source Data & Filters:** Select your `survey.design` object.
+2. **Grouping Dimensions:** Select the Time variable (e.g., `year`) and **one or more** Grouping variables (e.g., `State` and `Sector`).
+3. **Metrics:** Select your continuous variable (to calculate the mean for the Y-Axis) and your categorical variable + target level (to calculate the % for the X-Axis).
+4. Click **Submit**. A summarized table (`tabla_animacion`) will be saved to your workspace.
 
-### 2. Animated Bubble Chart
-* **What it does:** The main animation engine.
-* **Inputs:** Select your summarized data frame, map your X and Y axes, choose the Time variable, and optionally map Bubble Size and Color.
-* **Storytelling:** In the *Labels & Theme* tab, check "Highlight specific bubbles", type your target's name (or multiple names separated by commas), and tweak the animation duration/FPS in the *Render & Export* tab.
+### Step 2: Animated Bubble Chart
+1. **Variables:** Select `tabla_animacion`. Map your calculated X, Y, Size, and Color variables. Use the new **Optional Filter** box to dynamically subset your animation (e.g., `Sector == 'Manufacturing'`).
+2. **Labels & Theme:** Set titles, tweak the color palette, and use the **Storytelling** frame to track specific bubbles (e.g., type `Puebla, Jalisco` to only display names for those specific bubbles while they move).
+3. **Render & Export:** Set your FPS and duration. Click **Submit**. The GIF will be rendered and embedded directly into your RKWard HTML output window!
 
 ---
 

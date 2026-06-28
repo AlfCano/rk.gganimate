@@ -19,12 +19,13 @@
 		-->
 	</logic>
 	<dialog label="Animated Bubble Chart">
-		<row id="row_vVVDFSXANY">
+		<row id="row_vVVDFSOMXA">
 			<varselector id="v_sel_anim" />
 			<tabbook>
 				<tab label="Variables" id="tab_Variabls">
-					<column id="clm_vDFSXANYAN">
+					<column id="clm_vDFSOMXANY">
 						<varslot id="inp_df" label="Data Frame (Summarized data is recommended)" source="v_sel_anim" classes="data.frame" required="true" />
+						<input label="Optional: dplyr::filter condition (e.g., sec_est == 'Manufactura')" id="anim_filter" />
 						<varslot id="inp_x" label="X Axis (Numeric)" source="v_sel_anim" required="true" />
 						<varslot id="inp_y" label="Y Axis (Numeric)" source="v_sel_anim" required="true" />
 						<varslot id="inp_time" label="Time / Frame Variable (e.g., Year)" source="v_sel_anim" required="true" />

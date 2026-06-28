@@ -30,7 +30,7 @@
 						</frame>
 						<frame label="Grouping Dimensions" id="frm_GrpngDmn">
 							<varslot id="prep_time" label="1. Time Variable (e.g., year)" source="v_sel_prep" required="true" />
-							<varslot id="prep_group" label="2. Group Variable (e.g., ent)" source="v_sel_prep" required="true" />
+							<varslot id="prep_group" label="2. Group Variable(s) (e.g., ent, sec_est)" source="v_sel_prep" required="true" multi="true" />
 						</frame>
 					</column>
 				</tab>

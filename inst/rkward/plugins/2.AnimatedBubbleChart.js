@@ -5,7 +5,7 @@
 
 function preprocess(is_preview){
 	// add requirements etc. here
-	echo("require(ggplot2)\n");	echo("require(gganimate)\n");
+	echo("require(ggplot2)\n");	echo("require(gganimate)\n");	echo("require(gifski)\n");	echo("require(dplyr)\n");
 }
 
 function calculate(is_preview){
@@ -17,15 +17,24 @@ function calculate(is_preview){
     function getCol(id) {
         var raw = getValue(id);
         if (!raw) return 'NULL';
-        // Divide por corchetes o signos de dólar y filtra espacios vacíos
         var parts = raw.split(/[\[\]\$]+/).filter(Boolean);
         if (parts.length > 0) {
-            // Siempre toma la última parte (el verdadero nombre de la columna)
             var last = parts[parts.length - 1];
-            // Quita las comillas si las hay
             return last.replace(/["']/g, '');
         }
         return raw;
+    }
+
+    // NUEVA FUNCIÓN: Procesa selección múltiple y devuelve un array limpio
+    function getCleanArray(id) {
+        var rawValue = getValue(id);
+        if (!rawValue) return [];
+        var raw = rawValue.split(/\n/).filter(Boolean);
+        return raw.map(function(item) {
+            var parts = item.split(/[\[\]\$]+/).filter(Boolean);
+            var last = parts[parts.length - 1];
+            return last.replace(/["']/g, '');
+        });
     }
   
 
@@ -34,22 +43,29 @@ function calculate(is_preview){
 
     var title = getValue('inp_title'); var sub = getValue('inp_sub'); var xlab = getValue('inp_xlab'); var ylab = getValue('inp_ylab');
     var leg_title = getValue('inp_leg_title');
-    var caption = getValue('inp_caption'); // <--- NUEVA LÍNEA AQUÍ
+    var caption = getValue('inp_caption');
 
     var pal = getValue('drop_pal'); var theme = getValue('drop_theme'); var show_leg = getValue('chk_legend');
-    var base_sz = getValue('spin_base_size'); // NUEVO: Tamaño de fuente
+    var base_sz = getValue('spin_base_size');
 
     var story = getValue('chk_story'); var target = getValue('inp_target');
+    var anim_filt = getValue('anim_filter');
 
     var fps = getValue('spin_fps'); var dur = getValue('spin_dur'); var w = getValue('spin_w'); var h = getValue('spin_h'); var path = getValue('save_file');
 
-    echo("require(ggplot2)\nrequire(gganimate)\nrequire(gifski)\n\n");
+    // LÓGICA DE FILTRADO CORREGIDA
+    if (anim_filt !== '') {
+        echo("plot_data <- " + df + " %>% dplyr::filter(" + anim_filt + ")\n");
+    } else {
+        echo("plot_data <- " + df + "\n");
+    }
 
     var aes_call = "x = " + x + ", y = " + y;
     if (sz !== 'NULL') aes_call += ", size = " + sz;
     if (col !== 'NULL') aes_call += ", color = " + col;
 
-    echo("p <- ggplot2::ggplot(" + df + ", ggplot2::aes(" + aes_call + ")) +\n");
+    // A partir de aquí, TODO usa 'plot_data'
+    echo("p <- ggplot2::ggplot(plot_data, ggplot2::aes(" + aes_call + ")) +\n");
     echo("  ggplot2::geom_point(alpha = 0.75, stroke = 1)\n\n");
 
     if (sz !== 'NULL') {
@@ -58,7 +74,7 @@ function calculate(is_preview){
 
     if (col !== 'NULL') {
         echo("\n# Palette Logic for multiple groups\n");
-        echo("n_colors <- length(unique(stats::na.omit(" + df + "[['" + col + "']])))\n");
+        echo("n_colors <- length(unique(stats::na.omit(plot_data[['" + col + "']])))\n");
         echo("if(n_colors <= 8) {\n");
         echo("  p <- p + ggplot2::scale_color_brewer(palette = '" + pal + "')\n");
         echo("} else {\n");
@@ -67,7 +83,7 @@ function calculate(is_preview){
         echo("}\n\n");
     }
 
-    // LÓGICA DE STORYTELLING (GEOM_LABEL MULTIPLE)
+    // LÓGICA DE STORYTELLING (GEOM_LABEL MULTIPLE) USANDO plot_data
     if (col !== 'NULL' && story === '1' && target !== '') {
         var target_array = target.split(',').map(function(item) {
             return "'" + item.trim() + "'";
@@ -77,12 +93,11 @@ function calculate(is_preview){
         echo("# Storytelling: Track specific bubbles\n");
         echo("p <- p + ggplot2::geom_label(\n");
         echo("  ggplot2::aes(label = " + col + "),\n");
-        echo("  data = subset(" + df + ", " + col + " %in% " + target_vector + "),\n");
+        echo("  data = subset(plot_data, " + col + " %in% " + target_vector + "),\n");
         echo("  vjust = -1.5, size = 5, fontface = 'bold', show.legend = FALSE, alpha = 0.8\n");
         echo(")\n\n");
     }
 
-    // APLICAMOS EL TAMAÑO DE FUENTE DINÁMICO
     echo("p <- p + ggplot2::" + theme + "(base_size = " + base_sz + ")\n");
 
     if (show_leg !== '1') {
@@ -94,20 +109,18 @@ function calculate(is_preview){
     if (sub) labs_call.push("subtitle = '" + sub + "'");
     if (xlab) labs_call.push("x = '" + xlab + "'");
     if (ylab) labs_call.push("y = '" + ylab + "'");
-    if (caption) labs_call.push("caption = '" + caption + "'"); // <--- NUEVA LÍNEA AQUÍ
+    if (caption) labs_call.push("caption = '" + caption + "'");
 
-    // NUEVO: Lógica inteligente para el título de la leyenda
     if (col !== 'NULL') {
         if (leg_title !== '') {
-            // Si el usuario escribió algo, lo usamos
             labs_call.push("color = '" + leg_title + "'");
         } else {
-            // Si está vacío, le decimos a R que busque la etiqueta en los metadatos (.rk.meta o variable.label)
+            // Extracción de etiquetas desde la base original (porque dplyr a veces las tira al filtrar)
             echo("\n# Extraer etiqueta de variable para la leyenda\n");
             echo("col_lbl <- attr(" + df + "[['" + col + "']], 'variable.label')\n");
             echo("if(is.null(col_lbl)) col_lbl <- attr(" + df + "[['" + col + "']], '.rk.meta')[['label']]\n");
             echo("if(is.null(col_lbl)) col_lbl <- '" + col + "'\n");
-            labs_call.push("color = col_lbl"); // Sin comillas porque es una variable de R
+            labs_call.push("color = col_lbl");
         }
     }
 

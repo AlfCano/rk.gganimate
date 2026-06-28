@@ -17,6 +17,8 @@
 		<caption id="tab_Variabls" />
 		<setting id="inp_df">
 		</setting>
+		<setting id="anim_filter">
+		</setting>
 		<setting id="inp_x">
 		</setting>
 		<setting id="inp_y">
