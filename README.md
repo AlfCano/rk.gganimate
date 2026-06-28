@@ -65,7 +65,7 @@ You can install this plugin directly from GitHub using `devtools`:
 
 ```R
 # Install the plugin
-devtools::install_github("AlfCano/rk.gganimate")
+remotes::install_github("AlfCano/rk.gganimate")
 ```
 
 Once installed, open RKWard, navigate to **Settings -> Configure RKWard -> Plugins**, and activate `rk.gganimate`.
